@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Company Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar" id="companyList">
+    <div class="company" data-company="Apple">Apple</div>
+    <div class="company" data-company="Google">Google</div>
+    <div class="company" data-company="Amazon">Amazon</div>
+    <div class="company" data-company="Microsoft">Microsoft</div>
+  </div>
+
+  <div class="main">
+    <div id="chartWrapper" class="chart-container">
+      <canvas id="companyChart" width="600" height="400"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const chartData = {
+      Apple: [120, 135, 150],
+      Google: [90, 100, 110],
+      Amazon: [200, 180, 220],
+      Microsoft: [160, 170, 165],
+    };
+
+    const labels = ["Jan", "Feb", "Mar"];
+    const ctx = document.getElementById("companyChart").getContext("2d");
+
+    let chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label: "Apple Stock Value",
+          data: chartData["Apple"],
+          borderColor: "#3b82f6",
+          backgroundColor: "#3b82f6",
+          fill: false,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 800,
+          easing: 'easeOutQuart'
+        },
+        plugins: {
+          legend: {
+            display: true
+          }
+        }
+      }
+    });
+
+    document.getElementById("companyList").addEventListener("click", (e) => {
+      const company = e.target.getAttribute("data-company");
+      if (company && chartData[company]) {
+        // Animate the chart container
+        const wrapper = document.getElementById("chartWrapper");
+        wrapper.classList.remove("chart-container"); // reset animation
+        void wrapper.offsetWidth; // trigger reflow
+        wrapper.classList.add("chart-container");
+
+        // Update chart data
+        chart.data.datasets[0].data = chartData[company];
+        chart.data.datasets[0].label = `${company} Stock Value`;
+        chart.update();
+      }
+    });
+  </script>
+
+</body>
+</html>
